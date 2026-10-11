@@ -27,15 +27,27 @@ def setup_function():
 
 
 def test_unregister_participant_removes_email():
-    response = client.delete("/activities/Chess Club/signup?email=michael@mergington.edu")
+    # Arrange
+    activity_name = "Chess Club"
+    email = "michael@mergington.edu"
 
+    # Act
+    response = client.delete(f"/activities/{activity_name}/signup?email={email}")
+
+    # Assert
     assert response.status_code == 200
-    assert "michael@mergington.edu" not in activities["Chess Club"]["participants"]
-    assert response.json()["message"] == "Unregistered michael@mergington.edu from Chess Club"
+    assert email not in activities[activity_name]["participants"]
+    assert response.json()["message"] == f"Unregistered {email} from {activity_name}"
 
 
 def test_unregister_participant_raises_if_not_signed_up():
-    response = client.delete("/activities/Programming Class/signup?email=not-registered@example.com")
+    # Arrange
+    activity_name = "Programming Class"
+    email = "not-registered@example.com"
 
+    # Act
+    response = client.delete(f"/activities/{activity_name}/signup?email={email}")
+
+    # Assert
     assert response.status_code == 404
     assert response.json()["detail"] == "Participant not found in this activity"
